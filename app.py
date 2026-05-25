@@ -352,6 +352,12 @@ with col_right:
 
     # STEP 00: API Configuration Check (Only shows up if no valid API key is present in .env)
     env_key = os.getenv("GOOGLE_API_KEY", "")
+    if not env_key:
+        try:
+            if "GOOGLE_API_KEY" in st.secrets:
+                env_key = st.secrets["GOOGLE_API_KEY"]
+        except Exception:
+            pass
     has_api_key = env_key and not env_key.startswith("your_actual")
     
     if not has_api_key:
