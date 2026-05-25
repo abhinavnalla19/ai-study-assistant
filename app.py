@@ -524,55 +524,55 @@ with col_right:
                                     st.error("Not enough text data found to formulate a quiz.")
                             except Exception as e:
                                 st.error(f"Failed to generate: {e}")
-                    else:
-                        # Display Quiz Questions
-                        for i, q in enumerate(st.session_state.quiz):
-                            st.markdown(f"**Q{i+1}: {q['question']}**")
-                            current_selection = st.session_state.quiz_user_answers.get(i, None)
-                            select_idx = None
-                            if current_selection is not None:
-                                try:
-                                    select_idx = q["options"].index(current_selection)
-                                except ValueError:
-                                    select_idx = None
+                else:
+                    # Display Quiz Questions
+                    for i, q in enumerate(st.session_state.quiz):
+                        st.markdown(f"**Q{i+1}: {q['question']}**")
+                        current_selection = st.session_state.quiz_user_answers.get(i, None)
+                        select_idx = None
+                        if current_selection is not None:
+                            try:
+                                select_idx = q["options"].index(current_selection)
+                            except ValueError:
+                                select_idx = None
 
-                            user_choice = st.radio(
-                                f"q_opt_{i}",
-                                options=q["options"],
-                                index=select_idx,
-                                key=f"q_radio_{i}",
-                                disabled=st.session_state.quiz_submitted,
-                                label_visibility="collapsed"
-                            )
-                            st.session_state.quiz_user_answers[i] = user_choice
+                        user_choice = st.radio(
+                            f"q_opt_{i}",
+                            options=q["options"],
+                            index=select_idx,
+                            key=f"q_radio_{i}",
+                            disabled=st.session_state.quiz_submitted,
+                            label_visibility="collapsed"
+                        )
+                        st.session_state.quiz_user_answers[i] = user_choice
 
-                            if st.session_state.quiz_submitted:
-                                correct_answer = q["answer"]
-                                if user_choice == correct_answer:
-                                    st.success("✅ Correct!")
-                                else:
-                                    st.error(f"❌ Incorrect. Correct answer: **{correct_answer}**")
-                                st.info(f"💡 *Explanation:* {q['explanation']}")
-                            st.markdown("---")
+                        if st.session_state.quiz_submitted:
+                            correct_answer = q["answer"]
+                            if user_choice == correct_answer:
+                                st.success("✅ Correct!")
+                            else:
+                                st.error(f"❌ Incorrect. Correct answer: **{correct_answer}**")
+                            st.info(f"💡 *Explanation:* {q['explanation']}")
+                        st.markdown("---")
 
-                        # Submission Controls
-                        if not st.session_state.quiz_submitted:
-                            if st.button("Submit Answers", type="primary", use_container_width=True):
-                                if len(st.session_state.quiz_user_answers) < len(st.session_state.quiz):
-                                    st.warning("Please answer all questions before submitting!")
-                                else:
-                                    st.session_state.quiz_submitted = True
-                                    st.rerun()
-                        else:
-                            # Calculate Score
-                            score = sum([1 for idx, q in enumerate(st.session_state.quiz) if st.session_state.quiz_user_answers.get(idx) == q["answer"]])
-                            st.markdown(f"### **Score: {score} / 5**")
-
-                            if st.button("🔄 Try Another Quiz", use_container_width=True):
-                                st.session_state.quiz = None
-                                st.session_state.quiz_user_answers = {}
-                                st.session_state.quiz_submitted = False
+                    # Submission Controls
+                    if not st.session_state.quiz_submitted:
+                        if st.button("Submit Answers", type="primary", use_container_width=True):
+                            if len(st.session_state.quiz_user_answers) < len(st.session_state.quiz):
+                                st.warning("Please answer all questions before submitting!")
+                            else:
+                                st.session_state.quiz_submitted = True
                                 st.rerun()
+                    else:
+                        # Calculate Score
+                        score = sum([1 for idx, q in enumerate(st.session_state.quiz) if st.session_state.quiz_user_answers.get(idx) == q["answer"]])
+                        st.markdown(f"### **Score: {score} / 5**")
+
+                        if st.button("🔄 Try Another Quiz", use_container_width=True):
+                            st.session_state.quiz = None
+                            st.session_state.quiz_user_answers = {}
+                            st.session_state.quiz_submitted = False
+                            st.rerun()
 
                 # --------------------- MODE 3: INTERVIEW PREP ---------------------
         elif study_mode == "👔 Interview Prep":
